@@ -21,6 +21,20 @@ const db = getFirestore(app);
 
 const ROOM_ID = "shared-room";
 
+const CATEGORY_ORDER = [
+  "立地・アクセス",
+  "費用",
+  "間取り",
+  "収納",
+  "キッチン",
+  "水回り",
+  "設備・建物",
+  "住み心地",
+  "周辺環境",
+  "同棲向け",
+  "将来用"
+];
+
 let categories = structuredClone(defaultCategories);
 let selections = {};
 
@@ -36,12 +50,12 @@ async function saveState() {
 }
 
 async function loadState() {
-  const snap = await getDoc(
+  const snapshot = await getDoc(
     doc(db, "rooms", ROOM_ID)
   );
 
-  if (snap.exists()) {
-    const data = snap.data();
+  if (snapshot.exists()) {
+    const data = snapshot.data();
 
     if (data.categories) {
       categories = data.categories;
@@ -61,29 +75,34 @@ function score(me, partner) {
   return 70;
 }
 
-function getValue(id) {
-  return selections[id] || "なし";
+function getValue(key) {
+  return selections[key] || "なし";
 }
 
-window.setValue = async function(id, value) {
-  selections[id] = value;
+window.setValue = async function(key, value) {
 
-  await saveState();
+  selections[key] = value;
 
   render();
+
+  await saveState();
 };
 
 window.addCondition = async function() {
-  const cat = prompt("カテゴリ");
-  const name = prompt("条件名");
 
-  if (!cat || !name) return;
+  const category = prompt("カテゴリ");
 
-  if (!categories[cat]) {
-    categories[cat] = [];
+  if (!category) return;
+
+  const item = prompt("条件名");
+
+  if (!item) return;
+
+  if (!categories[category]) {
+    categories[category] = [];
   }
 
-  categories[cat].push(name);
+  categories[category].push(item);
 
   await saveState();
 
@@ -91,116 +110,102 @@ window.addCondition = async function() {
 };
 
 function render() {
+
   const root =
-    document.getElementById("categoryContainer");
+    document.getElementById(
+      "categoryContainer"
+    );
 
   if (!root) return;
 
   root.innerHTML = "";
 
-  Object.entries(categories).forEach(
-    ([cat, items]) => {
-      const details =
-        document.createElement("details");
+  const orderedCategories = [
 
-      details.open = true;
+    ...CATEGORY_ORDER,
 
-      let html =
-        `<summary>${cat}</summary>`;
+    ...Object.keys(categories).filter(
+      cat => !CATEGORY_ORDER.includes(cat)
+    )
 
-      items.forEach((name, index) => {
-        const meKey =
-          `${cat}-${index}-me`;
+  ];
 
-        const partnerKey =
-          `${cat}-${index}-partner`;
+  orderedCategories.forEach(cat => {
 
-        const me =
-          getValue(meKey);
+    const items = categories[cat];
 
-        const partner =
-          getValue(partnerKey);
+    if (!items) return;
 
-        html += `
-        <div class="item">
+    const details =
+      document.createElement("details");
 
-          <b>${name}</b>
+    details.open = true;
 
-          <div>
-            一致度:
-            ${score(me, partner)}%
-          </div>
+    let html =
+      `<summary>${cat}</summary>`;
 
-          <div class="segmented">
+    items.forEach((name, index) => {
+
+      const meKey =
+        `${cat}-${index}-me`;
+
+      const partnerKey =
+        `${cat}-${index}-partner`;
+
+      const me =
+        getValue(meKey);
+
+      const partner =
+        getValue(partnerKey);
+
+      html += `
+      <div class="item">
+
+        <b>${name}</b>
+
+        <div style="margin:8px 0;">
+          一致度:
+          <strong>${score(me, partner)}%</strong>
+        </div>
+
+        <div class="segmented">
+
+          <span style="width:50px;">
             あい
+          </span>
 
-            ${
-              ["重要","できれば","なし"]
-              .map(v => `
-              <button
-              class="seg-btn ${me===v?"active":""}"
-              onclick="setValue('${meKey}','${v}')">
+          ${
+            ["重要","できれば","なし"]
+            .map(v => `
+            <button
+              class="seg-btn ${
+                me === v ? "active" : ""
+              }"
+              onclick="
+                setValue(
+                  '${meKey}',
+                  '${v}'
+                )
+              ">
               ${v}
-              </button>
-              `)
-              .join("")
-            }
-
-          </div>
-
-          <div class="segmented">
-            はるや
-
-            ${
-              ["重要","できれば","なし"]
-              .map(v => `
-              <button
-              class="seg-btn ${partner===v?"active":""}"
-              onclick="setValue('${partnerKey}','${v}')">
-              ${v}
-              </button>
-              `)
-              .join("")
-            }
-
-          </div>
+            </button>
+            `)
+            .join("")
+          }
 
         </div>
-        `;
-      });
 
-      details.innerHTML = html;
+        <div class="segmented">
 
-      root.appendChild(details);
-    }
-  );
-}
+          <span style="width:50px;">
+            はるや
+          </span>
 
-document
-  .getElementById("addConditionBtn")
-  ?.addEventListener(
-    "click",
-    addCondition
-  );
-
-loadState();
-
-onSnapshot(
-  doc(db, "rooms", ROOM_ID),
-  (snapshot) => {
-
-    if (!snapshot.exists()) return;
-
-    const data = snapshot.data();
-
-    categories =
-      data.categories ||
-      categories;
-
-    selections =
-      data.selections ||
-      {};
-
-    render();
-  }
-);
+          ${
+            ["重要","できれば","なし"]
+            .map(v => `
+            <button
+              class="seg-btn ${
+                partner === v
+                  ? "active"
+       
