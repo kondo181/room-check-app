@@ -1,21 +1,71 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ふたりのお部屋探し Firebase版</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ふたりのお部屋探し Premium V5</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="wrap">
-<header class="hero"><h1>ふたりのお部屋探し</h1></header>
-<section class="card">
-<input id="searchInput" type="text" placeholder="条件を検索">
-<button id="addConditionBtn" class="primary-btn">条件追加</button>
-</section>
-<section id="categoryContainer"></section>
-</div>
-<script src="data.js"></script>
-<script type="module" src="app.js"></script>
+  <header class="header">
+    <h1>🏠 ふたりのお部屋探し Premium V5</h1>
+
+    <div class="summary-container">
+      <div class="summary-card">
+        <span class="summary-label">一致率</span>
+        <span id="matchRate" class="summary-value">0%</span>
+      </div>
+
+      <div class="summary-card">
+        <span class="summary-label">回答率</span>
+        <span id="answerRate" class="summary-value">0%</span>
+      </div>
+
+      <div class="summary-card">
+        <span class="summary-label">条件数</span>
+        <span id="conditionCount" class="summary-value">0</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="toolbar card">
+      <input type="text" id="searchInput" placeholder="条件名で検索...">
+      <button id="addConditionBtn" class="primary-btn">＋ 条件追加</button>
+    </section>
+
+    <div id="addModal" class="modal hidden">
+      <div class="modal-content">
+        <h2>条件追加</h2>
+        <label>カテゴリ</label>
+        <select id="newCategory"></select>
+
+        <label>条件名</label>
+        <input type="text" id="newCondition" placeholder="例：南向き必須">
+
+        <div class="modal-buttons">
+          <button id="saveConditionBtn" class="primary-btn">保存</button>
+          <button id="closeModalBtn" class="secondary-btn">キャンセル</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="editModal" class="modal hidden">
+      <div class="modal-content">
+        <h2>条件編集</h2>
+        <label>条件名</label>
+        <input type="text" id="editConditionInput">
+
+        <div class="modal-buttons">
+          <button id="updateConditionBtn" class="primary-btn">更新</button>
+          <button id="closeEditModalBtn" class="secondary-btn">キャンセル</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="categoriesContainer"></div>
+  </main>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>
