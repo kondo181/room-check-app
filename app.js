@@ -658,14 +658,13 @@ function renderCategoryStats() {
 
       card.innerHTML = `
         <div class="category-stat-title">
-          ${category}
+        ${category}
         </div>
 
-        <div class="category-stat-rate">
+         <div class="category-stat-rate">
           ${average}%
         </div>
-      `;
-
+        `;
       container.appendChild(
         card
       );
@@ -819,15 +818,25 @@ function render() {
       const conditions =
         categories[category];
 
+      if (!conditions) {
+        return;
+      }
+
+      const conditionList =
+        Array.isArray(conditions)
+          ? conditions
+          : Object.values(
+              conditions || {}
+            );
+
       if (
-        !conditions ||
-        conditions.length === 0
+        conditionList.length === 0
       ) {
         return;
       }
 
       const filtered =
-        conditions.filter(
+        conditionList.filter(
           condition =>
             condition.includes(
               searchKeyword
@@ -849,13 +858,13 @@ function render() {
         "category-card";
 
       card.innerHTML = `
-        <h2 class="category-title">
-          ${category}
-          <span class="category-count">
-            (${filtered.length})
-          </span>
-        </h2>
-      `;
+  <h2 class="category-title">
+    ${category}
+    <span class="category-count">
+      (${filtered.length})
+    </span>
+  </h2>
+`;
 
       filtered.forEach(
         condition => {
