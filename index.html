@@ -3,80 +3,216 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>ふたりのお部屋探し Premium V5</title>
+
 <link rel="stylesheet" href="style.css">
+
 <meta name="theme-color" content="#8b5cf6">
 </head>
+
 <body>
+
 <div id="loadingOverlay" class="loading-overlay">
   <div class="loader"></div>
   <p>Firestore同期中...</p>
 </div>
+
 <div id="toast" class="toast"></div>
+
 <header class="header">
+
   <h1>🏠 ふたりのお部屋探し Premium V5</h1>
+
   <div class="sync-area">
-    <div id="syncStatus" class="sync-status">🔄 同期中</div>
-    <div id="lastUpdated" class="last-updated">-</div>
+    <div id="syncStatus" class="sync-status">
+      🔄 同期中
+    </div>
+
+    <div id="lastUpdated" class="last-updated">
+      -
+    </div>
   </div>
+
   <div class="summary-container">
-    <div class="summary-card"><span class="summary-label">一致率</span><span id="matchRate" class="summary-value">0%</span></div>
-    <div class="summary-card"><span class="summary-label">回答率</span><span id="answerRate" class="summary-value">0%</span></div>
-    <div class="summary-card"><span class="summary-label">条件数</span><span id="conditionCount" class="summary-value">0</span></div>
-    <div class="summary-card"><span class="summary-label">未回答</span><span id="unansweredCount" class="summary-value">0</span></div>
+
+    <div class="summary-card">
+      <span class="summary-label">一致率</span>
+      <span id="matchRate" class="summary-value">0%</span>
+    </div>
+
+    <div class="summary-card">
+      <span class="summary-label">回答率</span>
+      <span id="answerRate" class="summary-value">0%</span>
+    </div>
+
+    <div class="summary-card">
+      <span class="summary-label">条件数</span>
+      <span id="conditionCount" class="summary-value">0件</span>
+    </div>
+
+    <div class="summary-card">
+      <span class="summary-label">未回答</span>
+      <span id="unansweredCount" class="summary-value">0</span>
+    </div>
+
   </div>
+
 </header>
+
 <main class="container">
+
   <section class="toolbar card">
-    <input type="text" id="searchInput" placeholder="条件名で検索...">
-    <button id="addConditionBtn" class="primary-btn">＋ 条件追加</button>
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="条件名で検索..."
+    >
+
+    <button
+      id="addConditionBtn"
+      class="primary-btn"
+    >
+      ＋ 条件追加
+    </button>
   </section>
 
   <section class="card legend-card">
-    <div class="legend-item"><span class="badge badge-high">100%</span>完全一致</div>
-    <div class="legend-item"><span class="badge badge-middle">70%</span>ほぼ一致</div>
-    <div class="legend-item"><span class="badge badge-low">0%</span>不一致</div>
+
+    <div class="legend-item">
+      <span class="badge badge-high">
+        100%
+      </span>
+      完全一致
+    </div>
+
+    <div class="legend-item">
+      <span class="badge badge-middle">
+        70%
+      </span>
+      ほぼ一致
+    </div>
+
+    <div class="legend-item">
+      <span class="badge badge-low">
+        0%
+      </span>
+      不一致
+    </div>
+
   </section>
 
-  <section id="categoryStats" class="category-stats"></section>
+  <section
+    id="categoryStats"
+    class="category-stats"
+  ></section>
 
   <section class="answer-header card">
-    <div class="condition-col">条件</div>
-    <div class="person-col">あい</div>
-    <div class="person-col">はるや</div>
-    <div class="match-col">一致率</div>
-    <div class="action-col">操作</div>
+
+    <div class="condition-col">
+      条件
+    </div>
+
+    <div class="person-col">
+      あい
+    </div>
+
+    <div class="person-col">
+      はるや
+    </div>
+
+    <div class="match-col">
+      一致率
+    </div>
+
+    <div class="action-col">
+      操作
+    </div>
+
   </section>
 
   <div id="categoriesContainer"></div>
+
 </main>
 
 <div id="addModal" class="modal hidden">
+
   <div class="modal-content">
+
     <h2>条件追加</h2>
+
     <label>カテゴリ</label>
+
     <select id="newCategory"></select>
+
     <label>条件名</label>
-    <input type="text" id="newCondition" placeholder="条件名" maxlength="100">
+
+    <input
+      type="text"
+      id="newCondition"
+      placeholder="条件名"
+      maxlength="100"
+    >
+
     <div class="modal-buttons">
-      <button id="saveConditionBtn" class="primary-btn">保存</button>
-      <button id="closeModalBtn" class="secondary-btn">キャンセル</button>
+
+      <button
+        id="saveConditionBtn"
+        class="primary-btn"
+      >
+        保存
+      </button>
+
+      <button
+        id="closeModalBtn"
+        class="secondary-btn"
+      >
+        キャンセル
+      </button>
+
     </div>
+
   </div>
+
 </div>
 
 <div id="editModal" class="modal hidden">
+
   <div class="modal-content">
+
     <h2>条件編集</h2>
+
     <label>条件名</label>
-    <input type="text" id="editConditionInput" maxlength="100">
+
+    <input
+      type="text"
+      id="editConditionInput"
+      maxlength="100"
+    >
+
     <div class="modal-buttons">
-      <button id="updateConditionBtn" class="primary-btn">更新</button>
-      <button id="closeEditModalBtn" class="secondary-btn">キャンセル</button>
+
+      <button
+        id="updateConditionBtn"
+        class="primary-btn"
+      >
+        更新
+      </button>
+
+      <button
+        id="closeEditModalBtn"
+        class="secondary-btn"
+      >
+        キャンセル
+      </button>
+
     </div>
+
   </div>
+
 </div>
 
 <script type="module" src="app.js"></script>
+
 </body>
 </html>
