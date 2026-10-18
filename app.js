@@ -298,58 +298,66 @@ function getMatchClass(
 
 function updateSummary() {
 
+  console.log("categories", categories);
+
   let total = 0;
   let answered = 0;
 
   let matchCount = 0;
   let matchTotal = 0;
 
-  Object.entries(
-    categories
-  ).forEach(
-    ([category, conditions]) => {
+Object.entries(
+  categories
+).forEach(
+  ([category, conditions]) => {
 
-      conditions.forEach(
-        condition => {
+    const conditionList =
+      Array.isArray(
+        conditions
+      )
+        ? conditions
+        : Object.values(
+            conditions || {}
+          );
 
-          total++;
+    conditionList.forEach(
+      condition => {
 
-          const key =
-            createKey(
-              category,
-              condition
-            );
+        total++;
 
-          const data =
-            selections[key] || {};
+        const key =
+          createKey(
+            category,
+            condition
+          );
 
-          if (data.ai) {
-            answered++;
-          }
+        const data =
+          selections[key] || {};
 
-          if (data.haruya) {
-            answered++;
-          }
-
-          const match =
-            calculateMatch(
-              data.ai,
-              data.haruya
-            );
-
-          if (
-            match !== null
-          ) {
-
-            matchTotal +=
-              match;
-
-            matchCount++;
-          }
+        if (data.ai) {
+          answered++;
         }
-      );
-    }
-  );
+
+        if (data.haruya) {
+          answered++;
+        }
+
+        const match =
+          calculateMatch(
+            data.ai,
+            data.haruya
+          );
+
+        if (
+          match !== null
+        ) {
+          matchTotal += match;
+          matchCount++;
+        }
+      }
+    );
+  }
+);
 
   const answerRate =
     total === 0
@@ -576,20 +584,27 @@ function renderCategoryStats() {
       "categoryStats"
     );
 
-  container.innerHTML =
-    "";
+  container.innerHTML = "";
 
   CATEGORY_ORDER.forEach(
     category => {
 
       const conditions =
-        categories[
-          category
-        ];
+        categories[category];
+
+      if (!conditions) {
+        return;
+      }
+
+      const conditionList =
+        Array.isArray(conditions)
+          ? conditions
+          : Object.values(
+              conditions || {}
+            );
 
       if (
-        !conditions ||
-        conditions.length === 0
+        conditionList.length === 0
       ) {
         return;
       }
@@ -597,7 +612,7 @@ function renderCategoryStats() {
       let matchCount = 0;
       let totalRate = 0;
 
-      conditions.forEach(
+      conditionList.forEach(
         condition => {
 
           const key =
@@ -619,9 +634,7 @@ function renderCategoryStats() {
             rate !== null
           ) {
 
-            totalRate +=
-              rate;
-
+            totalRate += rate;
             matchCount++;
           }
         }
@@ -658,7 +671,7 @@ function renderCategoryStats() {
       );
     }
   );
-}
+}     
 
 /* ==================================
    ANSWER SELECT
